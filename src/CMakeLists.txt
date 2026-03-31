@@ -63,7 +63,7 @@ add_library(tlsh_static STATIC ${TLSH_SRCS})
 
 # link properties
 target_link_libraries(tlsh_static PRIVATE default_compilation_flags debug_compilation_flags)
-set_target_properties(tlsh_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set_target_properties(tlsh_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/lib)
 set_target_properties(tlsh_static PROPERTIES OUTPUT_NAME tlsh${BUILD_POSTFIX})
 
 ##########################
@@ -78,7 +78,7 @@ endif()
 if(TLSH_SHARED_LIBRARY EQUAL 1)
     add_library(tlsh_shared SHARED ${TLSH_SRCS})
     target_link_libraries(tlsh_shared PRIVATE ${TLSH_SRCS} default_compilation_flags debug_compilation_flags)
-    set_target_properties(tlsh_shared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    set_target_properties(tlsh_shared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/lib)
     set_target_properties(tlsh_shared PROPERTIES OUTPUT_NAME tlsh${BUILD_POSTFIX})
     set_target_properties(tlsh_shared PROPERTIES VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
                                                  SOVERSION "${VERSION_MAJOR}")
