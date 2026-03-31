@@ -124,29 +124,48 @@ file(APPEND include/tlsh_version.h
   "#define TLSH_DISTANCE_PARAMETERS ${TLSH_DISTANCE_PARAMETERS}\n")
 endif()
 
+# default compilation flags
+add_library(default_compilation_flags INTERFACE)
+target_compile_options(default_compilation_flags INTERFACE
+        -fPIC
+        -fstack-protector-strong
+        -fvisibility=$<IF:$<CONFIG:TESTS>,default,hidden>
+        -Wall
+        -Wextra
+        -Wno-maybe-uninitialized
+        -march=native
+        -mtune=native
+)
+target_link_options(default_compilation_flags INTERFACE
+        -pie
+        -Wl,-demangle
+        -Wl,-zrelro
+        -Wl,-znow
+        -Wl,-znoexecstack
+)
+
+add_library(debug_compilation_flags INTERFACE)
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
-    if(CMAKE_COMPILER_IS_GNUCXX)
-        set(CMAKE_CXX_FLAGS "-g")
-    endif()
-else(CMAKE_BUILD_TYPE STREQUAL Debug)
-    if(MSVC)
-        set(CMAKE_CXX_FLAGS "/O2")        ## Optimize
-    else(MSVS)
-        set(CMAKE_CXX_FLAGS "-O3")
-    endif()
-endif(CMAKE_BUILD_TYPE STREQUAL Debug)
-
-if(MSVC)
-    add_definitions(-DWINDOWS -DTLSH_LIB)
-    include_directories(Windows)
+    target_compile_options(debug_compilation_flags INTERFACE
+            -g
+            -ggdb3
+            -fsanitize=address
+            -fno-omit-frame-pointer
+            -fdiagnostics-all-candidates
+            -O2
+    )
+else()
+    target_compile_options(debug_compilation_flags INTERFACE
+            -O3
+    )
 endif()
 
-# user can override CXX; make sure tests link and load properly regardless of LD_LIBRARY_PATH
-if(CMAKE_COMPILER_IS_GNUCXX)
-    # issue #116 Library will not compile on CENTOS 7
-    # set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc")
-endif()
+## user can override CXX; make sure tests link and load properly regardless of LD_LIBRARY_PATH
+#if(CMAKE_COMPILER_IS_GNUCXX)
+#    # issue #116 Library will not compile on CENTOS 7
+#    # set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
+#    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc")
+#endif()
 
 # from https://stackoverflow.com/questions/5395309/how-do-i-force-cmake-to-include-pthread-option-during-compilation
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
