@@ -145,7 +145,7 @@ add_library(default_compilation_flags INTERFACE)
 target_compile_options(default_compilation_flags INTERFACE
         -fPIC
         -fstack-protector-strong
-        -fvisibility=$<IF:$<CONFIG:TESTS>,default,hidden>
+        -fvisibility=default
         -Wall
         -Wextra
         -Wno-maybe-uninitialized
@@ -169,6 +169,9 @@ if (CMAKE_BUILD_TYPE STREQUAL Debug)
             -fno-omit-frame-pointer
             -fdiagnostics-all-candidates
             -O2
+    )
+    target_link_options(debug_compilation_flags INTERFACE
+            -fsanitize=address
     )
 else()
     target_compile_options(debug_compilation_flags INTERFACE
