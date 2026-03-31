@@ -72,7 +72,6 @@ static int read_file_eval_tlsh_splitline(char *fname, struct InputDescr *inputd,
 	FILE *fd = fopen(fname, "rb");
 	if(fd==NULL)
 		return(ERROR_READING_FILE);
-	int ret = 1;
 	int sizefile = 0;
 
 	fseek(fd, 0L, SEEK_END);
@@ -376,7 +375,7 @@ int set_input_desc(char *dirname, char *listname, int listname_col, int listname
 		prev_sl = 0;
 		for (int mi=0; mi<inputd->max_files; mi++) {
 			char buf[1000];
-			strncpy(buf, fname, sizeof(buf));
+			memcpy(buf, fname, sizeof(buf));
 			if (inputd->split_line_pos[mi] == -1) {
 				snprintf(buf, sizeof(buf), "%s_%d_end", fname, prev_sl);
 			} else {
